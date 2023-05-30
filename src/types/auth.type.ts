@@ -18,3 +18,8 @@ export type RegisteredUserResponse = {
     lastName: string;
     email: string;
 }
+
+export type LoginUserRequest = {
+    email: string;
+    password: string;
+}

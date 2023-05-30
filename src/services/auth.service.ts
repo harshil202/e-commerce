@@ -1,6 +1,7 @@
 import { UserModel } from "../models/user.model";
-import { RegisterUserReuqest, RegisteredUser } from "../types/auth.type";
+import { LoginUserRequest, RegisterUserReuqest, RegisteredUser } from "../types/auth.type";
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 export const authService = async (payload: RegisterUserReuqest) => {
     if ((payload.firstName === undefined) || (payload.lastName === undefined) || (payload.email === undefined) || (payload.password === undefined)) {
@@ -26,4 +27,23 @@ export const authService = async (payload: RegisterUserReuqest) => {
         lastName: registeredUser.lastName,
         email: registeredUser.email
     };
+}
+
+export const loginService = async (payload: LoginUserRequest) => {
+    if (payload.email === undefined || payload.password === undefined) {
+        return 'Email and Password are required'
+    }
+    const user = await UserModel.findOne({
+        where: {
+            email: payload.email
+        }
+    })
+    if (user) {
+        const isPasswordMatch = bcrypt.compareSync(payload.password, user.password)
+        if (isPasswordMatch) {
+            const token = jwt.sign({ id: user.id }, 'json_secret');
+            return token;
+        }
+        return 'Please enter valid email and password'
+    }
 }

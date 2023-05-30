@@ -2,6 +2,7 @@ import express from 'express';
 import sequelizeConnection from './db/db';
 import { dbInit } from './db/db_init';
 import Authroute from './routes/auth.route';
+import passport from 'passport';
 
 const app = express();
 try {
